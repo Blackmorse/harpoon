@@ -177,7 +177,8 @@ local function get_or_create_buffer(filename)
     return vim.fn.bufadd(filename)
 end
 
-function M.nav_file(id)
+
+local function nav_file_inner(id, action)
     log.trace("nav_file(): Navigating to", id)
     local idx = Marked.get_index_of(id)
     if not Marked.valid_index(idx) then
@@ -191,6 +192,11 @@ function M.nav_file(id)
     local set_row = not vim.api.nvim_buf_is_loaded(buf_id)
 
     local old_bufnr = vim.api.nvim_get_current_buf()
+
+    if action then
+        local window = require('window-picker').pick_window({ include_current_win = true, reuse_win = false });
+        vim.api.nvim_set_current_win(window)
+    end
 
     vim.api.nvim_set_current_buf(buf_id)
     vim.api.nvim_buf_set_option(buf_id, "buflisted", true)
@@ -215,6 +221,14 @@ function M.nav_file(id)
             vim.api.nvim_buf_delete(old_bufnr, {})
         end
     end
+end
+
+function M.nav_file(id)
+    nav_file_inner(id)
+end
+
+function M.nav_file_with_window(id)
+    nav_file_inner(id, true)
 end
 
 function M.location_window(options)
