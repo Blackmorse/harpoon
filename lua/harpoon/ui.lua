@@ -160,7 +160,7 @@ end
 function M.select_menu_item()
     local idx = vim.fn.line(".")
     close_menu(true)
-    M.nav_file(idx)
+    M.nav_file_with_window(idx)
 end
 
 function M.on_menu_save()
